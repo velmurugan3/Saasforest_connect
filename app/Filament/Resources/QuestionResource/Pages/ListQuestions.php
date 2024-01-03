@@ -13,7 +13,9 @@ class ListQuestions extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+            ->label('Add New Status')
+            ->url(fn (): string => route('filament.admin.resources.questions.question')),
         ];
     }
 }

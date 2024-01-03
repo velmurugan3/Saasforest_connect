@@ -104,6 +104,7 @@ class QuestionResource extends Resource
             'index' => Pages\ListQuestions::route('/'),
             'create' => Pages\CreateQuestion::route('/create'),
             'edit' => Pages\EditQuestion::route('/{record}/edit'),
+            'question' => Pages\AddQuestion::route('/question'),
         ];
     }
 }
