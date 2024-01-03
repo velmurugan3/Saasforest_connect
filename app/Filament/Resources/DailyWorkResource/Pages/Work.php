@@ -124,7 +124,8 @@ class Work extends Page implements HasForms
         $this->currentData = $test->content;
         // dd($this->currentData);
         // $this->workForm->fill();
-        $this->dailyForm->fill();
+        // $this->dailyForm->fill();
+        $this->dailyForm->fill($test->toArray());
 
         $this->dailyworks = DailyWork::with('user', 'date')->where('date_id', $this->record)->orderBy('created_at', 'desc')->get();
     }
