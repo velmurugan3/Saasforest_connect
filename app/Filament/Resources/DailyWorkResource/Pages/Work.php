@@ -103,25 +103,11 @@ class Work extends Page implements HasForms
 
     }
 
-    public function resetForm()
-    {
-
-        $this->refresh();
-    }
-
-    public function refresh()
-    {
-        // Logic to refresh the page or component
-    }
-
     public function editWork($id)
     {
         // dd($id);
         $this->workId = $id;
         $test = DailyWork::find($id);
-        $this->currentData = $id;
-        $this->currentData = $test->user_id;
-        $this->currentData = $test->content;
         // dd($this->currentData);
         // $this->workForm->fill();
         // $this->dailyForm->fill();
