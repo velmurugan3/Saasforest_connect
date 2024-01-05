@@ -39,9 +39,6 @@
                             class=" text-lg text-white bg-black w-11 h-11 font-medium flex justify-center items-center rounded-full">
                             <h1>{{ $dailywork->user->name[0] }}</h1>
                         </div>
-                        {{-- <div>
-                        <img src="/icon/profile-1.svg" alt="">
-                    </div> --}}
                         <div>
                             <div class=" flex gap-x-1 items-end">
                                 <h1 class=" text-lg font-medium">{{ $dailywork->user->name }}</h1>
@@ -53,7 +50,6 @@
                         </div>
                     </div>
                     @if (auth()->id() == $dailywork->user->id)
-                        {{-- @dd('Hi') --}}
                         <button @click="open = true" wire:click="editWork({{ $dailywork->id }})"
                             class=" text-[#1F2937]">Edit</button>
                     @endif
@@ -72,7 +68,7 @@
                         planning to work on today?</h1>
                     <form wire:submit="updateWork" class="">
                         {{ $this->dailyForm }}
-
+                        
                         <div class=" flex gap-x-7 items-center mt-7 pb-5">
                             <button class=" text-white bg-[#B39800] font-medium px-5 py-2 rounded-lg" type="submit"
                                 @click="open = false">

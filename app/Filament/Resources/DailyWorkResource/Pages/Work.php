@@ -108,6 +108,7 @@ class Work extends Page implements HasForms
         // dd($id);
         $this->workId = $id;
         $test = DailyWork::find($id);
+        // dd($test);
         // dd($this->currentData);
         // $this->workForm->fill();
         // $this->dailyForm->fill();
@@ -127,6 +128,8 @@ class Work extends Page implements HasForms
             'user_id' => $updateWork->user_id,
             'content' => $workId['content'],
         ]);
+
+        // dd($updateWork);
 
         Notification::make()
             ->title('Updated successfully')

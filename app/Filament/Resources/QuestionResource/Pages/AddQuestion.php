@@ -26,12 +26,21 @@ class AddQuestion extends Page implements HasForms
     public $dailys;
     public $times;
     public $users;
-    #[Validate('required|min:3')]
+
+    #[Validate('required')]
     public $description;
+
     public $record;
+
+    #[Validate('required')]
     public $status;
+
+    #[Validate('required')]
     public $day;
+
+    #[Validate('required')]
     public $day1;
+    
     public $userName;
     public ?array $data = [];
     public $a;
@@ -46,10 +55,10 @@ class AddQuestion extends Page implements HasForms
                     ->label('Who do you want to ask?')
                     ->multiple()
                     ->options(User::all()->pluck('name', 'id'))
-                    ->searchable(),
+                    ->searchable()
+                    ->required(),
             ])
             ->statePath('data');
-        // ->model(TaskUser::class);
     }
 
     protected function getForms(): array
@@ -63,6 +72,7 @@ class AddQuestion extends Page implements HasForms
     {
         // dd($this->form->getState());
         // dd($this->day1);
+        $this->validate();
 
         if ($this->day == 'Beginning of the day (10:00 AM )') {
             $this->day = '10:00';
@@ -94,12 +104,15 @@ class AddQuestion extends Page implements HasForms
                 'question_id' => $question->id,
             ]);
         }
+
         Notification::make()
             ->title('Saved successfully')
             ->success()
             ->send();
 
         $this->clearQuestion();
+
+
     }
 
     public function clearQuestion()
@@ -112,17 +125,25 @@ class AddQuestion extends Page implements HasForms
     public function editQuestion($id)
     {
         $this->a = Question::find($id);
-        // dd($a->time);
+        // dd($this->a);
+        $taskUser = TaskUser::find($id);
+        // dd($taskUser->user_id);
         $this->description = $this->a->title;
         $this->status = $this->a->status;
         $this->day = $this->a->time;
         $this->day1 = $this->a->time;
         $this->updateVal = true;
+        $us=[];
+        foreach ($taskUser as $task) {
+            dd($task);
+        // $us[]=$task;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
+            }
+        $this->form->fill(['user_id'=>$us]);
         // dd($this->day1);
 
         // Convert 24-hour format to 12-hour format
         $dateTime = DateTime::createFromFormat('H:i:s', $this->day1);
-        // // dd($dateTime);
+        // dd($dateTime);
         
         if ($dateTime) {
             $twelveHourTime = $dateTime->format('h:i A');
@@ -135,13 +156,43 @@ class AddQuestion extends Page implements HasForms
     public function updateQuestion(){
         // dd($this->record);
         $updateQuestion = Question::find($this->record);
-        // dd($updateQuestion);
-        $updateQuestion->update([
-            'title' => $updateQuestion->title,
-            'status' => $updateQuestion->status,
-            'time' => $updateQuestion->time,
-        ]);
-        // dd($updateQuestion->title);
+        // dd($updateQuestion->time);
+        // dd($this->day);
+        // $userData = $this->form->getState();
+        // dd($userData);
+
+        if ($this->day == 'Beginning of the day (10:00 AM )') {
+            // dd('Velu');
+            $this->day = '10:00';
+            $updateQuestion->update([
+                'title' => $this->description,
+                'status' => $this->status,
+                'time' => $this->day,
+            ]);
+        } elseif ($this->day == 'End of the day (06:00 PM )') {
+            // dd('Muthu');
+            $this->day = '18:00';
+            $updateQuestion->update([
+                'title' => $this->description,
+                'status' => $this->status,
+                'time' => $this->day,
+            ]);
+        } else {
+            // dd('Velsamy');
+            $updateQuestion->update([
+                'title' => $this->description,
+                'status' => $this->status,
+                'time' => $this->day1,
+            ]);
+        }
+
+        // dd($this->day);
+
+        // $updateQuestion->update([
+        //     'title' => $this->description,
+        //     'status' => $this->status,
+        //     'time' => $this->day,
+        // ]);
 
         Notification::make()
             ->title('Updated successfully')

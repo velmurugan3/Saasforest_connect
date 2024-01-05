@@ -68,7 +68,7 @@ class QuestionResource extends Resource
                 TextColumn::make('title'),
                 TextColumn::make('status'),
                 TextColumn::make('time'),
-                TextColumn::make('userName.id'),
+                TextColumn::make('taskUser.users.name'),
             ])
             ->filters([
                 //
@@ -79,10 +79,6 @@ class QuestionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                // Tables\Actions\CreateAction::make()->label('New Timesheet')
-                // ->after(function(){
-                //     dd('yes');
-                // })
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
