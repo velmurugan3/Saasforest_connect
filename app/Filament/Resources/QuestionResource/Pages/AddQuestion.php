@@ -54,7 +54,7 @@ class AddQuestion extends Page implements HasForms
         $taskUser = TaskUser::with('question')->where('question_id', $this->record)->get();
         foreach ($taskUser as $task) {
             $names = User::find($task->user_id);
-            $this->idCollection[] = $names->id;
+            $this->idCollection[] = $names->name;
         }
 
         // dd($this->idCollection);
@@ -114,6 +114,7 @@ class AddQuestion extends Page implements HasForms
         }
 
         $userData = $this->form->getState();
+        // dd($userData);
 
         foreach ($userData['user_id'] as $b) {
             TaskUser::create([
@@ -134,7 +135,9 @@ class AddQuestion extends Page implements HasForms
     {
         // dd('Velu');
         $this->description = '';
+        $this->status = '';
         $this->day = '';
+        $this->day1 = '';
     }
 
     public function editQuestion($id)
@@ -154,12 +157,11 @@ class AddQuestion extends Page implements HasForms
             // dd($task);
             $names = User::find($task->user_id);
             // dd($na);
-            $nameCollection[] = $names->name;
-            $this->idCollection[] = $names->id;
-            // dd($this->idCollection);
+            $nameCollection[] = $names->id;
         }
         // dd($this->idCollection);
-        $userFill = $this->form->fill(['user_id' => $nameCollection]);
+        $this->form->fill(['user_id' => $nameCollection]);
+        // dd($nameCollection);
         // dd($userFill);
         // dd($this->day1);
 
@@ -211,12 +213,22 @@ class AddQuestion extends Page implements HasForms
         $userData = $this->form->getState();
         // dd($userData['user_id']);
 
-        // foreach ($userData['user_id'] as $b) {
-        //     TaskUser::create([
-        //         'user_id' => $b,
-        //         'question_id' => $updateQuestion->id,
-        //     ]);
-        // }
+        foreach ($userData['user_id'] as $userId) {
+            // Check if the user_id already exists
+            $existingUser = TaskUser::where('user_id', $userId)->where('question_id',$updateQuestion->id)->first();
+        
+            // If the user does not exist, perform the update
+            if (!$existingUser) {
+                TaskUser::create([
+                    'user_id' => $userId,
+                    'question_id' => $updateQuestion->id,
+                ]);
+            }
+        }
+
+        // Delete records for users that are in the database but not in the form state
+        TaskUser::whereNotIn('user_id', $userData['user_id'])->where('question_id',$updateQuestion->id)
+            ->delete();
 
         // dd($this->day);
 

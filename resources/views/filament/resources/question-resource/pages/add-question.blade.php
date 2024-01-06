@@ -58,7 +58,7 @@
                     @endforeach
                     <div class=" flex items-center gap-x-2 mt-5">
                         <input type="radio" name="time" value="{{ $day1 }}"
-                            :checked="'{{ $date }}' != '10:00 AM' && '{{ $date }}' != '06:00 PM' ? true: false"
+                            :checked="'{{$date}}' ? '{{ $date }}' != '10:00 AM' && '{{ $date }}' != '06:00 PM' ? true: false : ''"
                             class=" border border-[#D1D5DB] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.07)]">
                         <label for="" class=" text-[#374151]">Let me pick a time</label>
                         <input type="time" wire:model="day1"
