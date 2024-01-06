@@ -26,11 +26,10 @@ class AddQuestion extends Page implements HasForms
     public $dailys;
     public $times;
     public $users;
+    public $record;
 
     #[Validate('required')]
     public $description;
-
-    public $record;
 
     #[Validate('required')]
     public $status;
@@ -40,21 +39,38 @@ class AddQuestion extends Page implements HasForms
 
     #[Validate('required')]
     public $day1;
-    
+
     public $userName;
     public ?array $data = [];
     public $a;
     public $date;
     public $updateVal;
+    public $idCollection = [];
 
     public function form(Form $form): Form
     {
+        $options = [];
+        // dd($this->idCollection);
+        $taskUser = TaskUser::with('question')->where('question_id', $this->record)->get();
+        foreach ($taskUser as $task) {
+            $names = User::find($task->user_id);
+            $this->idCollection[] = $names->id;
+        }
+
+        // dd($this->idCollection);
+        if ($this->idCollection == []) {
+            $options = User::all()->pluck('name', 'id');
+        } else {
+            // dd('Velu');
+            $options = User::whereNotIn('id', $this->idCollection)->pluck('name', 'id');
+        }
+
         return $form
             ->schema([
                 Select::make('user_id')
                     ->label('Who do you want to ask?')
                     ->multiple()
-                    ->options(User::all()->pluck('name', 'id'))
+                    ->options($options)
                     ->searchable()
                     ->required(),
             ])
@@ -70,11 +86,10 @@ class AddQuestion extends Page implements HasForms
 
     public function createQuestion(): void
     {
-        // dd($this->form->getState());
-        // dd($this->day1);
-        $this->validate();
+        // $this->validate();
 
         if ($this->day == 'Beginning of the day (10:00 AM )') {
+            // dd('Velu');
             $this->day = '10:00';
             $question = Question::create([
                 'title' => $this->description,
@@ -82,6 +97,7 @@ class AddQuestion extends Page implements HasForms
                 'time' => $this->day,
             ]);
         } elseif ($this->day == 'End of the day (06:00 PM )') {
+            // dd('Muthu');
             $this->day = '18:00';
             $question = Question::create([
                 'title' => $this->description,
@@ -89,6 +105,7 @@ class AddQuestion extends Page implements HasForms
                 'time' => $this->day,
             ]);
         } elseif ($this->day == '') {
+            // dd('Velsamy');
             $question = Question::create([
                 'title' => $this->description,
                 'status' => $this->status,
@@ -111,8 +128,6 @@ class AddQuestion extends Page implements HasForms
             ->send();
 
         $this->clearQuestion();
-
-
     }
 
     public function clearQuestion()
@@ -126,34 +141,41 @@ class AddQuestion extends Page implements HasForms
     {
         $this->a = Question::find($id);
         // dd($this->a);
-        $taskUser = TaskUser::find($id);
-        // dd($taskUser->user_id);
+        $taskUser = TaskUser::with('question')->where('question_id', $id)->get();
+        // dd($taskUser);
         $this->description = $this->a->title;
         $this->status = $this->a->status;
         $this->day = $this->a->time;
         $this->day1 = $this->a->time;
         $this->updateVal = true;
-        $us=[];
+        $nameCollection = [];
+        // dd($taskUser);
         foreach ($taskUser as $task) {
-            dd($task);
-        // $us[]=$task;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
-            }
-        $this->form->fill(['user_id'=>$us]);
+            // dd($task);
+            $names = User::find($task->user_id);
+            // dd($na);
+            $nameCollection[] = $names->name;
+            $this->idCollection[] = $names->id;
+            // dd($this->idCollection);
+        }
+        // dd($this->idCollection);
+        $userFill = $this->form->fill(['user_id' => $nameCollection]);
+        // dd($userFill);
         // dd($this->day1);
 
         // Convert 24-hour format to 12-hour format
         $dateTime = DateTime::createFromFormat('H:i:s', $this->day1);
         // dd($dateTime);
-        
+
         if ($dateTime) {
             $twelveHourTime = $dateTime->format('h:i A');
-        } 
+        }
 
         $this->date = $twelveHourTime;
-
     }
 
-    public function updateQuestion(){
+    public function updateQuestion()
+    {
         // dd($this->record);
         $updateQuestion = Question::find($this->record);
         // dd($updateQuestion->time);
@@ -186,6 +208,16 @@ class AddQuestion extends Page implements HasForms
             ]);
         }
 
+        $userData = $this->form->getState();
+        // dd($userData['user_id']);
+
+        // foreach ($userData['user_id'] as $b) {
+        //     TaskUser::create([
+        //         'user_id' => $b,
+        //         'question_id' => $updateQuestion->id,
+        //     ]);
+        // }
+
         // dd($this->day);
 
         // $updateQuestion->update([
@@ -206,7 +238,7 @@ class AddQuestion extends Page implements HasForms
         $this->users = User::all();
         // dd($this->users);
         $this->dailys = ['Daily On', 'Once a Week', 'Every other week', 'Once a month on the first'];
-        $this->times = [['Beginning of the day (10:00 AM )','10:00 AM'], ['End of the day (06:00 PM )','06:00 PM']];
+        $this->times = [['Beginning of the day (10:00 AM )', '10:00 AM'], ['End of the day (06:00 PM )', '06:00 PM']];
         $this->form->fill();
 
         if ($this->record != null) {

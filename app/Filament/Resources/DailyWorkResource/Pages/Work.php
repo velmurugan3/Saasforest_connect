@@ -99,8 +99,6 @@ class Work extends Page implements HasForms
 
         $this->workForm->fill();
 
-        $this->resetForm();
-
     }
 
     public function editWork($id)
