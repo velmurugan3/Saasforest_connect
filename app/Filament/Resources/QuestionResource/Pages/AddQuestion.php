@@ -41,6 +41,7 @@ class AddQuestion extends Page implements HasForms
     public ?array $data = [];
     public $a;
     public $date;
+    public $selectTime;
     public $updateVal;
     public $idCollection = [];
 
@@ -142,12 +143,12 @@ class AddQuestion extends Page implements HasForms
         $nameCollection = [];
         // dd($taskUser);
         foreach ($taskUser as $task) {
-            // dd($task);
             $names = User::find($task->user_id);
-            // dd($na);
+            // dd($names);
             $nameCollection[] = $names->id;
+            // dd($nameCollection);
         }
-        // dd($this->idCollection);
+        // dd($nameCollection);
         $this->form->fill(['user_id' => $nameCollection]);
         // dd($nameCollection);
         // dd($userFill);
@@ -228,10 +229,11 @@ class AddQuestion extends Page implements HasForms
 
     public function clearQuestion()
     {
-        
+
         $this->description = '';
         $this->status = '';
         $this->day = '';
+        $this->selectTime = '';
         $this->form->fill();
     }
 
