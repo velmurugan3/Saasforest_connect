@@ -57,16 +57,16 @@
                         </div>
                     @endforeach
                     <div class=" flex items-center gap-x-2 mt-5">
-                        <input type="radio" name="time" value="{{ $day1 }}"
+                        <input type="radio" name="time" value="{{ $day }}"
                             :checked="'{{$date}}' ? '{{ $date }}' != '10:00 AM' && '{{ $date }}' != '06:00 PM' ? true: false : ''"
                             class=" border border-[#D1D5DB] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.07)]">
                         <label for="" class=" text-[#374151]">Let me pick a time</label>
-                        <input type="time" wire:model="day1"
+                        <input type="time" wire:model="day"
                             class=" bg-white border border-[#D1D5D8] px-1 h-6 w-[106px] rounded">
                     </div>
-                    {{-- @error('day')
+                    @error('day')
                         <span class=" text-red-600 block mt-1">{{ $message }}</span>
-                    @enderror --}}
+                    @enderror
                 </div>
                 <div class=" mt-6">
                     {{ $this->form }}
@@ -74,18 +74,23 @@
             </div>
 
             {{-- Button section start  --}}
-            <div class=" flex gap-x-6 items-center mt-7">
+            <div class=" flex gap-x-6 items-center mt-7" x-data>
                 <button type="submit" class=" text-white bg-[#E0BF00] font-medium px-5 py-2 rounded-lg">
                     {{ $updateVal ? 'update' : 'create' }}
                 </button>
-                <button wire:click="clearQuestion"
-                    class=" text-[#1F2937] border border-[#D1D5DB] font-medium px-5 py-2 rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.07)]"
-                    type="reset">
+                <button x-on:click="refreshPage" type="button"
+                    class=" text-[#1F2937] border border-[#D1D5DB] font-medium px-5 py-2 rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.07)]">
                     Cancel
                 </button>
             </div>
             {{-- Button section end  --}}
         </form>
+
+        <script>
+            function refreshPage() {
+                window.location.reload();
+            }
+        </script>
 
     </div>
 </x-filament-panels::page>

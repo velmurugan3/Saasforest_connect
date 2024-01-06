@@ -37,9 +37,6 @@ class AddQuestion extends Page implements HasForms
     #[Validate('required')]
     public $day;
 
-    #[Validate('required')]
-    public $day1;
-
     public $userName;
     public ?array $data = [];
     public $a;
@@ -86,7 +83,7 @@ class AddQuestion extends Page implements HasForms
 
     public function createQuestion(): void
     {
-        // $this->validate();
+        $this->validate();
 
         if ($this->day == 'Beginning of the day (10:00 AM )') {
             // dd('Velu');
@@ -104,12 +101,12 @@ class AddQuestion extends Page implements HasForms
                 'status' => $this->status,
                 'time' => $this->day,
             ]);
-        } elseif ($this->day == '') {
+        } else{
             // dd('Velsamy');
             $question = Question::create([
                 'title' => $this->description,
                 'status' => $this->status,
-                'time' => $this->day1,
+                'time' => $this->day,
             ]);
         }
 
@@ -131,15 +128,6 @@ class AddQuestion extends Page implements HasForms
         $this->clearQuestion();
     }
 
-    public function clearQuestion()
-    {
-        // dd('Velu');
-        $this->description = '';
-        $this->status = '';
-        $this->day = '';
-        $this->day1 = '';
-    }
-
     public function editQuestion($id)
     {
         $this->a = Question::find($id);
@@ -149,7 +137,7 @@ class AddQuestion extends Page implements HasForms
         $this->description = $this->a->title;
         $this->status = $this->a->status;
         $this->day = $this->a->time;
-        $this->day1 = $this->a->time;
+        // $this->day1 = $this->a->time;
         $this->updateVal = true;
         $nameCollection = [];
         // dd($taskUser);
@@ -166,7 +154,7 @@ class AddQuestion extends Page implements HasForms
         // dd($this->day1);
 
         // Convert 24-hour format to 12-hour format
-        $dateTime = DateTime::createFromFormat('H:i:s', $this->day1);
+        $dateTime = DateTime::createFromFormat('H:i:s', $this->day);
         // dd($dateTime);
 
         if ($dateTime) {
@@ -206,7 +194,7 @@ class AddQuestion extends Page implements HasForms
             $updateQuestion->update([
                 'title' => $this->description,
                 'status' => $this->status,
-                'time' => $this->day1,
+                'time' => $this->day,
             ]);
         }
 
@@ -230,18 +218,21 @@ class AddQuestion extends Page implements HasForms
         TaskUser::whereNotIn('user_id', $userData['user_id'])->where('question_id',$updateQuestion->id)
             ->delete();
 
-        // dd($this->day);
-
-        // $updateQuestion->update([
-        //     'title' => $this->description,
-        //     'status' => $this->status,
-        //     'time' => $this->day,
-        // ]);
-
         Notification::make()
             ->title('Updated successfully')
             ->success()
             ->send();
+
+            $this->clearQuestion();
+    }
+
+    public function clearQuestion()
+    {
+        
+        $this->description = '';
+        $this->status = '';
+        $this->day = '';
+        $this->form->fill();
     }
 
     public function mount(): void
