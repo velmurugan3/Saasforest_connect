@@ -84,6 +84,9 @@ class AddQuestion extends Page implements HasForms
 
     public function createQuestion(): void
     {
+
+        // dd($this->users[3]->id);
+
         $this->validate();
 
         if ($this->day == 'Beginning of the day (10:00 AM )') {
@@ -102,7 +105,7 @@ class AddQuestion extends Page implements HasForms
                 'status' => $this->status,
                 'time' => $this->day,
             ]);
-        } else{
+        } else {
             // dd('Velsamy');
             $question = Question::create([
                 'title' => $this->description,
@@ -127,6 +130,12 @@ class AddQuestion extends Page implements HasForms
             ->send();
 
         $this->clearQuestion();
+
+        // Notification::make()
+        //     ->success()
+        //     ->title($this->description)
+        //     ->sendToDatabase($this->users[3]->id);
+
     }
 
     public function editQuestion($id)
@@ -204,8 +213,8 @@ class AddQuestion extends Page implements HasForms
 
         foreach ($userData['user_id'] as $userId) {
             // Check if the user_id already exists
-            $existingUser = TaskUser::where('user_id', $userId)->where('question_id',$updateQuestion->id)->first();
-        
+            $existingUser = TaskUser::where('user_id', $userId)->where('question_id', $updateQuestion->id)->first();
+
             // If the user does not exist, perform the update
             if (!$existingUser) {
                 TaskUser::create([
@@ -216,7 +225,7 @@ class AddQuestion extends Page implements HasForms
         }
 
         // Delete records for users that are in the database but not in the form state
-        TaskUser::whereNotIn('user_id', $userData['user_id'])->where('question_id',$updateQuestion->id)
+        TaskUser::whereNotIn('user_id', $userData['user_id'])->where('question_id', $updateQuestion->id)
             ->delete();
 
         Notification::make()
@@ -224,7 +233,7 @@ class AddQuestion extends Page implements HasForms
             ->success()
             ->send();
 
-            $this->clearQuestion();
+        $this->clearQuestion();
     }
 
     public function clearQuestion()
@@ -240,8 +249,8 @@ class AddQuestion extends Page implements HasForms
     public function mount(): void
     {
 
-        $this->users = User::all();
-        // dd($this->users);
+        $this->users = User::with('jobInfo.designation')->get();
+        // dd($this->users[1]->jobInfo->designation->name);
         $this->dailys = ['Daily On', 'Once a Week', 'Every other week', 'Once a month on the first'];
         $this->times = [['Beginning of the day (10:00 AM )', '10:00 AM'], ['End of the day (06:00 PM )', '06:00 PM']];
         $this->form->fill();

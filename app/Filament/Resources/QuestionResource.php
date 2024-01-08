@@ -43,15 +43,8 @@ class QuestionResource extends Resource
                                 'Every other week' => 'Every other week',
                                 'Once a month on the first' => 'Once a month on the first'
                             ]),
-                        // Radio::make('time')
-                        //     ->label('At what time of the day?')
-                        //     ->options([
-                        //         'Beginning of the day (10:00 AM )' => 'Beginning of the day (10:00 AM )',
-                        //         'End of the day (06:00 PM )' => 'End of the day (06:00 PM )',
-                        //         'Let me pick a time' => 'Let me pick a time',
-                        //     ]),
                         TimePicker::make('time')
-                        ->label('At what time of the day?'),
+                            ->label('At what time of the day?'),
                         Select::make('user_id')
                             ->label('Who do you want to ask?')
                             ->multiple()
@@ -73,10 +66,7 @@ class QuestionResource extends Resource
             ->filters([
                 //
             ])
-            ->headerActions([
-               
-                        
-            ])
+            ->headerActions([])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
