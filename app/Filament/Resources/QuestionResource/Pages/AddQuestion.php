@@ -7,10 +7,12 @@ use App\Models\Question;
 use App\Models\TaskUser;
 use App\Models\User;
 use DateTime;
+// use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Livewire\Attributes\Validate;
@@ -27,7 +29,7 @@ class AddQuestion extends Page implements HasForms
     public $times;
     public $users;
     public $record;
-
+    public $passValue;
     #[Validate('required')]
     public $description;
 
@@ -85,7 +87,7 @@ class AddQuestion extends Page implements HasForms
     public function createQuestion(): void
     {
 
-        // dd($this->users[3]->id);
+        // dd($this->users[3]->name);
 
         $this->validate();
 
@@ -113,16 +115,31 @@ class AddQuestion extends Page implements HasForms
                 'time' => $this->day,
             ]);
         }
+        // dd($question);
 
         $userData = $this->form->getState();
-        // dd($userData);
+        // dd($userData['user_id']);
+
+        $this->passValue = $this->description;
 
         foreach ($userData['user_id'] as $b) {
             TaskUser::create([
                 'user_id' => $b,
                 'question_id' => $question->id,
             ]);
+            $new = User::find($b); 
+            Notification::make()
+            ->success()
+            ->title($this->passValue)
+            ->actions([
+                Action::make('view')
+                    ->button()
+                    ->url(route('filament.admin.resources.dates.index')),
+            ])
+            ->sendToDatabase($new);
         }
+        // dd($this->new);
+        // dd($passValue);
 
         Notification::make()
             ->title('Saved successfully')
@@ -130,11 +147,6 @@ class AddQuestion extends Page implements HasForms
             ->send();
 
         $this->clearQuestion();
-
-        // Notification::make()
-        //     ->success()
-        //     ->title($this->description)
-        //     ->sendToDatabase($this->users[3]->id);
 
     }
 
@@ -214,6 +226,7 @@ class AddQuestion extends Page implements HasForms
         foreach ($userData['user_id'] as $userId) {
             // Check if the user_id already exists
             $existingUser = TaskUser::where('user_id', $userId)->where('question_id', $updateQuestion->id)->first();
+            // dd($existingUser);
 
             // If the user does not exist, perform the update
             if (!$existingUser) {
@@ -222,11 +235,13 @@ class AddQuestion extends Page implements HasForms
                     'question_id' => $updateQuestion->id,
                 ]);
             }
+
         }
 
         // Delete records for users that are in the database but not in the form state
-        TaskUser::whereNotIn('user_id', $userData['user_id'])->where('question_id', $updateQuestion->id)
+        $v = TaskUser::whereNotIn('user_id', $userData['user_id'])->where('question_id', $updateQuestion->id)
             ->delete();
+            // dd($v);
 
         Notification::make()
             ->title('Updated successfully')
@@ -244,11 +259,18 @@ class AddQuestion extends Page implements HasForms
         $this->day = '';
         $this->selectTime = '';
         $this->form->fill();
+        
     }
 
     public function mount(): void
     {
 
+        $taskUser = TaskUser::with('question')
+        ->whereHas('question', function ($query) {
+            $query->where('status', 'Daily On');
+        })
+        ->get();
+        // dd($taskUser[0]->question->status);
         $this->users = User::with('jobInfo.designation')->get();
         // dd($this->users[1]->jobInfo->designation->name);
         $this->dailys = ['Daily On', 'Once a Week', 'Every other week', 'Once a month on the first'];
