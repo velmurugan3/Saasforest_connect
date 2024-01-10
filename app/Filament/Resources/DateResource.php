@@ -67,7 +67,7 @@ class DateResource extends Resource
             'index' => Pages\ListDates::route('/'),
             'create' => Pages\CreateDate::route('/create'),
             'edit' => Work::route('/{record}/edit'),
-
+            'popup' => Pages\DailyWorkPopup::route('/popup'),
         ];
     }
     

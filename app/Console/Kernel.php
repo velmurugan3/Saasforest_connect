@@ -37,16 +37,16 @@ class Kernel extends ConsoleKernel
                 ->get();
             if ($taskUsers[0]->question->status) {
                 foreach ($taskUsers as $taskUser) {
-                    $v = $taskUser->users;
+                    $sendNotification = $taskUser->users;
                     Notification::make()
                         ->success()
                         ->title($taskUser->question->title)
                         ->actions([
                             Action::make('view')
                                 ->button()
-                                ->url("/dates"),
+                                ->url("/dates/popup"),
                         ])
-                        ->sendToDatabase($v);
+                        ->sendToDatabase($sendNotification);
                 }
             }
             $this->dailyOn = $taskUsers[0]->question->time;
@@ -62,16 +62,16 @@ class Kernel extends ConsoleKernel
                 ->get();
             if ($taskUsers[0]->question->status) {
                 foreach ($taskUsers as $taskUser) {
-                    $v = $taskUser->users;
+                    $sendNotification = $taskUser->users;
                     Notification::make()
                         ->success()
                         ->title($taskUser->question->title)
                         ->actions([
                             Action::make('view')
                                 ->button()
-                                ->url("/dates"),
+                                ->url("/dates/popup"),
                         ])
-                        ->sendToDatabase($v);
+                        ->sendToDatabase($sendNotification);
                 }
             }
             $this->onceWeek = $taskUsers[0]->question->time;
@@ -86,16 +86,16 @@ class Kernel extends ConsoleKernel
                 ->get();
             if ($taskUsers[0]->question->status) {
                 foreach ($taskUsers as $taskUser) {
-                    $v = $taskUser->users;
+                    $sendNotification = $taskUser->users;
                     Notification::make()
                         ->success()
                         ->title($taskUser->question->title)
                         ->actions([
                             Action::make('view')
                                 ->button()
-                                ->url("/dates"),
+                                ->url("/dates/popup"),
                         ])
-                        ->sendToDatabase($v);
+                        ->sendToDatabase($sendNotification);
                 }
             }
         })->everyMinute();
@@ -109,21 +109,21 @@ class Kernel extends ConsoleKernel
                 ->get();
             if ($taskUsers[0]->question->status) {
                 foreach ($taskUsers as $taskUser) {
-                    $v = $taskUser->users;
+                    $sendNotification = $taskUser->users;
                     Notification::make()
                         ->success()
                         ->title($taskUser->question->title)
                         ->actions([
                             Action::make('view')
                                 ->button()
-                                ->url("/dates"),
+                                ->url("/dates/popup"),
                         ])
-                        ->sendToDatabase($v);
+                        ->sendToDatabase($sendNotification);
                 }
             }
             $this->onceMonth = $taskUsers[0]->question->time;
 
-        })->monthlyOn($this->onceMonth);
+        })->monthly($this->onceMonth);
 
     }
 

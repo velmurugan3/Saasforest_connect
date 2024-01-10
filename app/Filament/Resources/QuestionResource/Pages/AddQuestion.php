@@ -87,8 +87,6 @@ class AddQuestion extends Page implements HasForms
     public function createQuestion(): void
     {
 
-        // dd($this->users[3]->name);
-
         $this->validate();
 
         if ($this->day == 'Beginning of the day (10:00 AM )') {
@@ -127,19 +125,17 @@ class AddQuestion extends Page implements HasForms
                 'user_id' => $b,
                 'question_id' => $question->id,
             ]);
-            $new = User::find($b); 
-            Notification::make()
-            ->success()
-            ->title($this->passValue)
-            ->actions([
-                Action::make('view')
-                    ->button()
-                    ->url(route('filament.admin.resources.dates.index')),
-            ])
-            ->sendToDatabase($new);
+            // $new = User::find($b); 
+            // Notification::make()
+            // ->success()
+            // ->title($this->passValue)
+            // ->actions([
+            //     Action::make('view')
+            //         ->button()
+            //         ->url(route('filament.admin.resources.dates.index')),
+            // ])
+            // ->sendToDatabase($new);
         }
-        // dd($this->new);
-        // dd($passValue);
 
         Notification::make()
             ->title('Saved successfully')
