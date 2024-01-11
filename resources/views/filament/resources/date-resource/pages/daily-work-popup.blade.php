@@ -15,22 +15,20 @@
     }" :class="open == true ? popup : ''">
         {{-- Popup section start  --}}
         <div x-show="open" x-transition.duration.500ms class="fixed inset-0 z-40 bg-black/40">
-            <div @click.outside="open = false"
-                class="bg-white fixed inset-0 w-[1000px] h-[440px] rounded-xl m-auto overflow-y-auto">
+            <div class="bg-white fixed inset-0 w-[1000px] h-[440px] rounded-xl m-auto overflow-y-auto">
                 <div class=" px-6 h-full">
                     <h1 class=" text-[26px] font-bold pt-4 pb-10">What did you work on yesterday, and what are you
                         planning to work on today?</h1>
                     <form wire:submit="createWork" class="">
                         {{ $this->dailyForm }}
 
-                        <div class=" flex gap-x-7 items-center mt-7 pb-5">
-                            <button class=" text-white bg-[#B39800] font-medium px-5 py-2 rounded-lg" type="submit"
-                                @click="open = false">
+                        <div class=" flex gap-x-7 items-center mt-7">
+                            <button class=" text-white bg-[#B39800] font-medium px-5 py-2 rounded-lg" type="submit">
                                 submit
                             </button>
                             <button wire:click="cancel"
                                 class=" text-[#1F2937] border border-[#D1D5DB] font-medium px-5 py-2 rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.07)]"
-                                type="reset" @click="open = false">
+                                type="reset">
                                 Cancel
                             </button>
                         </div>

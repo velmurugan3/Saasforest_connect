@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->enum('status', ['Daily On', 'Once a Week', 'Every other week', 'Once a month on the first']);
+            $table->enum('status', ['Daily On', 'Once a Week', 'Once a month on the first']);
             $table->time('time');
             $table->timestamps();
         });

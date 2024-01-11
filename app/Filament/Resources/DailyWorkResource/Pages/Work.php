@@ -5,6 +5,7 @@ namespace App\Filament\Resources\DailyWorkResource\Pages;
 use App\Filament\Resources\DailyWorkResource;
 use App\Models\DailyWork;
 use App\Models\Date;
+use Carbon\Carbon;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
@@ -31,18 +32,28 @@ class Work extends Page implements HasForms
     public $dateValue;
     public $workId;
     public $firstLetterUpper;
+    public $isCurrentDate;
     public ?array $work = [];
     public ?array $daily = [];
 
 
     public function workForm(Form $form): Form
     {
+    
+        $currentDate = Carbon::now()->format("Y-m-d");
+        $date = Date::where('id', $this->record)->first();
+        // dd($date->date);
+        $givenDate = $date->date;
+        $this->isCurrentDate = Carbon::parse($givenDate)->equalTo(Carbon::parse($currentDate));
+        // dd($isCurrentDate);
+
         return $form
             ->schema([
                 RichEditor::make('content')
                     ->label('')
                     ->required()
-                    ->columnSpanFull(),
+                    ->columnSpanFull()
+                    ->visible($this->isCurrentDate),
             ])
             ->statePath('work')
             ->model(DailyWork::class);
@@ -135,6 +146,17 @@ class Work extends Page implements HasForms
             ->send();
 
         $this->dailyworks = DailyWork::with('user', 'date')->where('date_id', $this->record)->orderBy('created_at', 'desc')->get();
+    }
+
+    public function getHeading(): string
+    {
+        if ($this->isCurrentDate) {
+            return 'What did you work on yesterday, and what are you planning to work on today?';
+        }
+        else{
+            return 'The Work Progress';
+        }
+
     }
 
     public function mount(): void

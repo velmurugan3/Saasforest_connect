@@ -13,21 +13,23 @@
         open: false,
         popup: 'fixed z-40 w-full',
     }" :class="open == true ? popup : ''">
-        <h1 class=" text-3xl font-bold">What did you work on yesterday, and what are you planning to work on
-            today?</h1>
-        <form wire:submit="createWork" class=" mt-8">
+        {{-- <h1 class=" text-3xl font-bold">What did you work on yesterday, and what are you planning to work on
+            today?</h1> --}}
+        <form wire:submit="createWork" class="">
             {{ $this->workForm }}
 
+            @if($this->isCurrentDate)
             <div class=" flex gap-x-7 items-center mt-7">
-                <button class=" text-white bg-[#B39800] font-medium px-5 py-2 rounded-lg" type="submit">
+                <button class=" text-white bg-[#B39800] font-medium px-5 py-2 rounded-lg" type="submit" {{ auth()->id() == 1 ? 'disabled' : '' }}>
                     Submit
                 </button>
                 <button
                     class=" text-[#1F2937] border border-[#D1D5DB] font-medium px-5 py-2 rounded-lg shadow-[0px_1px_3px_0px_rgba(0,0,0,0.07)]"
-                    type="reset">
+                    type="reset" {{ auth()->id() == 1 ? 'disabled' : '' }}>
                     Cancel
                 </button>
             </div>
+            @endif
         </form>
 
         {{-- Daily Update Section start  --}}
@@ -44,7 +46,7 @@
                                 <h1 class=" text-lg font-medium">{{ $dailywork->user->name }}</h1>
                                 {{-- {{\Carbon\Carbon::parse($dailywork->created_at)->format('H:i A')}} --}}
                                 <h6 class=" text-xs text-[#AAAAAA] mb-[3px]">
-                                    {{ $dailywork->created_at->format('H:i A') }}</h6>
+                                    {{ $dailywork->created_at->format('h:i A') }}</h6>
                             </div>
                             <h4 class=" text-[#666666]">{{ $dailywork->user->jobInfo->designation->name }}</h4>
                         </div>

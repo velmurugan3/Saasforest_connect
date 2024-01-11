@@ -269,7 +269,7 @@ class AddQuestion extends Page implements HasForms
         // dd($taskUser[0]->question->status);
         $this->users = User::with('jobInfo.designation')->get();
         // dd($this->users[1]->jobInfo->designation->name);
-        $this->dailys = ['Daily On', 'Once a Week', 'Every other week', 'Once a month on the first'];
+        $this->dailys = ['Daily On', 'Once a Week','Once a month on the first'];
         $this->times = [['Beginning of the day (10:00 AM )', '10:00 AM'], ['End of the day (06:00 PM )', '06:00 PM']];
         $this->form->fill();
 

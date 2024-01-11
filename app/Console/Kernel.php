@@ -4,6 +4,7 @@ namespace App\Console;
 
 use App\Models\Date;
 use App\Models\TaskUser;
+use DateTime;
 use Filament\Notifications\Notification;
 use Filament\Notifications\Actions\Action;
 use Illuminate\Console\Scheduling\Schedule;
@@ -17,10 +18,12 @@ class Kernel extends ConsoleKernel
     public $dailyOn;
     public $onceWeek;
     public $onceMonth;
+    public $trimmed_time;
+    public $trimmed_time2;
 
     protected function schedule(Schedule $schedule): void
     {
-       
+
         // $schedule->command('inspire')->hourly();
         $schedule->call(function () {
             Date::create([
@@ -28,102 +31,86 @@ class Kernel extends ConsoleKernel
             ]);
         })->dailyAt('01:00');
 
+
         // Daily On 
-        $schedule->call(function () {
-            $taskUsers = TaskUser::with('users', 'question')
-                ->whereHas('question', function ($query) {
-                    $query->where('status', 'Daily On');
-                })
-                ->get();
-            if ($taskUsers[0]->question->status) {
-                foreach ($taskUsers as $taskUser) {
-                    $sendNotification = $taskUser->users;
-                    Notification::make()
-                        ->success()
-                        ->title($taskUser->question->title)
-                        ->actions([
-                            Action::make('view')
-                                ->button()
-                                ->url("/dates/popup"),
-                        ])
-                        ->sendToDatabase($sendNotification);
-                }
-            }
-            $this->dailyOn = $taskUsers[0]->question->time;
-            // dd($this->dailyOn);
-        })->dailyAt($this->dailyOn);
+        $dailyTaskUsers = TaskUser::with('users', 'question')
+            ->whereHas('question', function ($query) {
+                $query->where('status', 'Daily On');
+            })
+            ->get();
+
+        foreach ($dailyTaskUsers as $taskUser) {
+            $this->dailyOn = $taskUser->question->time;
+            $time_obj = DateTime::createFromFormat('H:i:s', $this->dailyOn);
+            $trimmed_time = $time_obj->format('H:i');
+
+            $schedule->call(function () use ($taskUser) {
+                $sendNotification = $taskUser->users;
+                Notification::make()
+                    ->success()
+                    ->title($taskUser->question->title)
+                    ->actions([
+                        Action::make('view')
+                            ->button()
+                            ->url("/dates/popup"),
+                    ])
+                    ->sendToDatabase($sendNotification);
+            })->dailyAt($trimmed_time);
+        }
+
 
         // Once a Week
-        $schedule->call(function () {
-            $taskUsers = TaskUser::with('users', 'question')
-                ->whereHas('question', function ($query) {
-                    $query->where('status', 'Once a Week');
-                })
-                ->get();
-            if ($taskUsers[0]->question->status) {
-                foreach ($taskUsers as $taskUser) {
-                    $sendNotification = $taskUser->users;
-                    Notification::make()
-                        ->success()
-                        ->title($taskUser->question->title)
-                        ->actions([
-                            Action::make('view')
-                                ->button()
-                                ->url("/dates/popup"),
-                        ])
-                        ->sendToDatabase($sendNotification);
-                }
-            }
-            $this->onceWeek = $taskUsers[0]->question->time;
-        })->weeklyOn(1, $this->onceWeek);
+        $weekTaskUsers = TaskUser::with('users', 'question')
+        ->whereHas('question', function ($query) {
+            $query->where('status', 'Once a Week');
+        })
+        ->get();
 
-        // Every other week
-        $schedule->call(function () {
-            $taskUsers = TaskUser::with('users', 'question')
-                ->whereHas('question', function ($query) {
-                    $query->where('status', 'Every other week');
-                })
-                ->get();
-            if ($taskUsers[0]->question->status) {
-                foreach ($taskUsers as $taskUser) {
-                    $sendNotification = $taskUser->users;
-                    Notification::make()
-                        ->success()
-                        ->title($taskUser->question->title)
-                        ->actions([
-                            Action::make('view')
-                                ->button()
-                                ->url("/dates/popup"),
-                        ])
-                        ->sendToDatabase($sendNotification);
-                }
-            }
-        })->everyMinute();
+        foreach ($weekTaskUsers as $taskUser) {
+            $this->onceWeek = $taskUser->question->time;
+            $time_obj = DateTime::createFromFormat('H:i:s', $this->onceWeek);
+            $trimmed_time = $time_obj->format('H:i');
+
+            $schedule->call(function () use ($taskUser) {
+                $sendNotification = $taskUser->users;
+                Notification::make()
+                    ->success()
+                    ->title($taskUser->question->title)
+                    ->actions([
+                        Action::make('view')
+                            ->button()
+                            ->url("/dates/popup"),
+                    ])
+                    ->sendToDatabase($sendNotification);
+            })->weeklyOn(1, $trimmed_time);
+        }
+
 
         // Once a month on the first
-        $schedule->call(function () {
-            $taskUsers = TaskUser::with('users', 'question')
-                ->whereHas('question', function ($query) {
-                    $query->where('status', 'Once a month on the first');
-                })
-                ->get();
-            if ($taskUsers[0]->question->status) {
-                foreach ($taskUsers as $taskUser) {
-                    $sendNotification = $taskUser->users;
-                    Notification::make()
-                        ->success()
-                        ->title($taskUser->question->title)
-                        ->actions([
-                            Action::make('view')
-                                ->button()
-                                ->url("/dates/popup"),
-                        ])
-                        ->sendToDatabase($sendNotification);
-                }
-            }
-            $this->onceMonth = $taskUsers[0]->question->time;
+        $monthTaskUsers = TaskUser::with('users', 'question')
+        ->whereHas('question', function ($query) {
+            $query->where('status', 'Once a month on the first');
+        })
+        ->get();
 
-        })->monthly($this->onceMonth);
+        foreach ($monthTaskUsers as $taskUser) {
+            $this->onceMonth = $taskUser->question->time;
+            $time_obj = DateTime::createFromFormat('H:i:s', $this->onceMonth);
+            $trimmed_time = $time_obj->format('H:i');
+
+            $schedule->call(function () use ($taskUser) {
+                $sendNotification = $taskUser->users;
+                Notification::make()
+                    ->success()
+                    ->title($taskUser->question->title)
+                    ->actions([
+                        Action::make('view')
+                            ->button()
+                            ->url("/dates/popup"),
+                    ])
+                    ->sendToDatabase($sendNotification);
+            })->monthly($trimmed_time);
+        }
 
     }
 

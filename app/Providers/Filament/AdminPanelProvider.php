@@ -145,7 +145,7 @@ class AdminPanelProvider extends PanelProvider
                             }),
                     ]);
 
-                    $worker = JobInfo::where('report_to',auth()->user()->id)->get();
+                $worker = JobInfo::where('report_to', auth()->user()->id)->get();
                 $navigationGroups[] =  NavigationGroup::make('Time Off')
                     ->items([
                         ...LeaveResource::getNavigationItems(),
@@ -188,12 +188,12 @@ class AdminPanelProvider extends PanelProvider
                         ]);
                 }
                 if (!auth()->user()->hasRole('Staff')) {
-                $navigationGroups[] = NavigationGroup::make('Recruitment')
-                    ->items([
-                        ...(auth()->user()->hasRole('Supervisor') || auth()->user()->hasRole('HR') || auth()->user()->hasRole('Super Admin') ? JobResource::getNavigationItems() : []),
-                        ...CandidateResource::getNavigationItems(),
-                        ...RecruitmentReportResource::getNavigationItems()
-                    ]);
+                    $navigationGroups[] = NavigationGroup::make('Recruitment')
+                        ->items([
+                            ...(auth()->user()->hasRole('Supervisor') || auth()->user()->hasRole('HR') || auth()->user()->hasRole('Super Admin') ? JobResource::getNavigationItems() : []),
+                            ...CandidateResource::getNavigationItems(),
+                            ...RecruitmentReportResource::getNavigationItems()
+                        ]);
                 }
 
                 // if (auth()->user()->hasPermissionTo('LMS')) {
@@ -226,12 +226,15 @@ class AdminPanelProvider extends PanelProvider
 
                     ]);
 
-                    // DailyWorkResource 
-                    $navigationGroups[] =  NavigationGroup::make('DailyWork')
+                // DailyWorkResource 
+
+                $navigationGroups[] =  NavigationGroup::make('DailyWork')
                     ->items([
                         // ...DailyWorkResource::getNavigationItems(),
                         ...DateResource::getNavigationItems(),
-                        ...QuestionResource::getNavigationItems(),
+                        // ...(auth()->user()->hasPermissionTo('Manage Course') ? CourseResource::getNavigationItems() : 
+                        ...(auth()->user()->hasRole('Super Admin') ?
+                            QuestionResource::getNavigationItems() : [])
 
                     ]);
 
@@ -290,7 +293,7 @@ class AdminPanelProvider extends PanelProvider
                             NavigationItem::make('TimeOff')
                                 ->icon('heroicon-o-calendar')
                                 ->isActiveWhen(function (): bool {
-                                    return request()->routeIs('filament.admin.resources.time-off.holidays.index') || request()->routeIs('filament.resources.time-off/leave-types.index') || request()->routeIs('filament.resources.time-off/policy-frequencies.index') || request()->routeIs('filament.resources.time-off/work-weeks.index') || request()->routeIs('filament.resources.time-off/policies.index') || request()->routeIs('filament.admin.resources.time-off.leave-types.index')|| request()->routeIs('filament.admin.resources.time-off.policy-frequencies.index')||request()->routeIs('filament.admin.resources.time-off.work-weeks.index')||request()->routeIs('filament.admin.resources.time-off.policies.index');
+                                    return request()->routeIs('filament.admin.resources.time-off.holidays.index') || request()->routeIs('filament.resources.time-off/leave-types.index') || request()->routeIs('filament.resources.time-off/policy-frequencies.index') || request()->routeIs('filament.resources.time-off/work-weeks.index') || request()->routeIs('filament.resources.time-off/policies.index') || request()->routeIs('filament.admin.resources.time-off.leave-types.index') || request()->routeIs('filament.admin.resources.time-off.policy-frequencies.index') || request()->routeIs('filament.admin.resources.time-off.work-weeks.index') || request()->routeIs('filament.admin.resources.time-off.policies.index');
                                 })
                                 ->url(route('filament.admin.resources.time-off.holidays.index')),
                             ...RoleResource::getNavigationItems(),
