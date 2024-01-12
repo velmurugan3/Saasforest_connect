@@ -24,6 +24,7 @@ use App\Filament\Resources\HelpDesk\TicketResource;
 use App\Filament\Resources\Learning\CourseResource;
 use App\Filament\Resources\Learning\EnrollmentResource;
 use App\Filament\Resources\Learning\MyLearningResource;
+use App\Filament\Resources\MyInfoResource;
 use App\Filament\Resources\Offboarding\OffboardingListResource;
 use App\Filament\Resources\Onboarding\OnboardingListResource;
 use App\Filament\Resources\PatientResource;
@@ -227,7 +228,6 @@ class AdminPanelProvider extends PanelProvider
                     ]);
 
                 // DailyWorkResource 
-
                 $navigationGroups[] =  NavigationGroup::make('DailyWork')
                     ->items([
                         // ...DailyWorkResource::getNavigationItems(),
@@ -237,6 +237,15 @@ class AdminPanelProvider extends PanelProvider
                             QuestionResource::getNavigationItems() : [])
 
                     ]);
+
+                // HRMS Resource
+                $navigationGroups[] =  NavigationGroup::make('HRMS')
+                ->items([
+                    // ...DailyWorkResource::getNavigationItems(),
+                    ...MyInfoResource::getNavigationItems(),
+
+                ]);
+
 
                 // FINANCE REIMBURSEMENT
                 $navigationGroups[] =  NavigationGroup::make('Finance')

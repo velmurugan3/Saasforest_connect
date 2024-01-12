@@ -35,7 +35,7 @@ use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 use PragmaRX\Countries\Package\Countries;
 
 use Filament\Forms\Get;
-
+use Filament\Tables\Columns\ViewColumn;
 
 class EmployeeResource extends Resource
 {
@@ -337,10 +337,11 @@ class EmployeeResource extends Resource
 
                 Split::make([
                     Stack::make([
-                        ImageColumn::make('employee.profile_picture_url')
-                            ->label('Image')->circular(),
-                        TextColumn::make('name')->searchable()->sortable()->toggleable()->weight('bold'),
-                        TextColumn::make('jobInfo.designation.name')->label('Gender'),
+                        // ImageColumn::make('employee.profile_picture_url')
+                        //     ->label('Image')->circular(),
+                        // TextColumn::make('name')->searchable()->sortable()->toggleable()->weight('bold'),
+                        // TextColumn::make('jobInfo.designation.name')->label('Gender'),
+                        ViewColumn::make('sd')->view('tables.columns.employee-profile'),
                     ])
                 ])
             ])
