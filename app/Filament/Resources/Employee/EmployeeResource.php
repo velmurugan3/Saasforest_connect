@@ -35,6 +35,7 @@ use Tapp\FilamentTimezoneField\Forms\Components\TimezoneSelect;
 use PragmaRX\Countries\Package\Countries;
 
 use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\ViewColumn;
 
 class EmployeeResource extends Resource
@@ -56,16 +57,15 @@ class EmployeeResource extends Resource
     {
 
         $countries = new Countries();
-        $currencies=$countries->currencies();
-        $currencyList=[];
-        foreach($currencies as $key=>$value){
-            $currencyList[$key]=$value->name;
+        $currencies = $countries->currencies();
+        $currencyList = [];
+        foreach ($currencies as $key => $value) {
+            $currencyList[$key] = $value->name;
         }
         ksort($currencyList);
         return $form
 
             ->schema([
-
                 TextInput::make('name')
                     ->label('First Name')
                     ->required(),
@@ -104,18 +104,18 @@ class EmployeeResource extends Resource
                     ->columns(2),
 
 
-                Section::make('Roles')->disabled( function(){
+                Section::make('Roles')->disabled(function () {
 
-                    if(auth()->user()&&auth()->user()->hasRole('Staff')){
+                    if (auth()->user() && auth()->user()->hasRole('Staff')) {
                         return true;
                     }
                 })
-                ->schema([
-                    Select::make('roles')->relationship('roles', 'name')
-                        ->options(Role::all()->pluck('name', 'id'))
-                        ->required()
-                        ->multiple()->searchable(),
-                ]),
+                    ->schema([
+                        Select::make('roles')->relationship('roles', 'name')
+                            ->options(Role::all()->pluck('name', 'id'))
+                            ->required()
+                            ->multiple()->searchable(),
+                    ]),
 
 
                 Section::make('Address')
@@ -146,9 +146,9 @@ class EmployeeResource extends Resource
                     ])
                     ->columns(2),
 
-                Section::make('Job Info')->disabled( function(){
+                Section::make('Job Info')->disabled(function () {
 
-                    if(auth()->user()&&auth()->user()->hasRole('Staff')){
+                    if (auth()->user() && auth()->user()->hasRole('Staff')) {
                         return true;
                     }
                 })
@@ -177,7 +177,7 @@ class EmployeeResource extends Resource
 
                         Select::make('team_id')
                             ->relationship('team', 'name')
-->required()
+                            ->required()
                             ->createOptionForm([
                                 TextInput::make('name')->label('Team')->required()
 
@@ -193,18 +193,16 @@ class EmployeeResource extends Resource
                     ->columns(2),
 
 
-                Section::make('Compensation')->disabled( function(){
+                Section::make('Compensation')->disabled(function () {
 
-                    if(auth()->user()&&auth()->user()->hasRole('Staff')){
+                    if (auth()->user() && auth()->user()->hasRole('Staff')) {
                         return true;
                     }
                 })
                     ->relationship('salaryDetail')
                     ->schema([
-
-
                         Select::make('payment_interval_id')
-                        ->label('payment interval')
+                            ->label('payment interval')
                             ->relationship('paymentinterval', 'name')
                             ->required(),
 
@@ -212,9 +210,7 @@ class EmployeeResource extends Resource
                             ->relationship('paymentMethod', 'name')
                             ->required(),
                         TextInput::make('amount')
-                        ->required()
-
-                           ,
+                            ->required(),
                         // Select::make('currency')
                         //     ->options(Currency::all()->pluck('name', 'id'))
                         //     ->searchable()
@@ -242,12 +238,12 @@ class EmployeeResource extends Resource
                 //             ->required()
 
                 //     ]),
-                Section::make('Bank Info')->disabled( function(){
+                Section::make('Bank Info')->disabled(function () {
 
-                     if(auth()->user()&&auth()->user()->hasRole('Staff')){
-                         return true;
-                     }
-                 })
+                    if (auth()->user() && auth()->user()->hasRole('Staff')) {
+                        return true;
+                    }
+                })
                     ->relationship('bankInfo')
                     ->schema([
 
@@ -269,12 +265,12 @@ class EmployeeResource extends Resource
 
 
 
-                Section::make('Employment')->disabled( function(){
+                Section::make('Employment')->disabled(function () {
 
-                     if(auth()->user()&&auth()->user()->hasRole('Staff')){
-                         return true;
-                     }
-                 })
+                    if (auth()->user() && auth()->user()->hasRole('Staff')) {
+                        return true;
+                    }
+                })
                     ->relationship('employment')
                     ->reactive()
                     ->schema([
@@ -299,39 +295,36 @@ class EmployeeResource extends Resource
                     ->reactive()
                     ->schema([
                         DatePicker::make('start_date')
-                        ->required(),
+                            ->required(),
                         DatePicker::make('end_date')
-                        ->minDate(function (Get $get) {
-                            $startDate = $get('start_date');
-                            return $startDate ? Carbon::parse($startDate) : now();
-                        })
-                        ->required(),
+                            ->minDate(function (Get $get) {
+                                $startDate = $get('start_date');
+                                return $startDate ? Carbon::parse($startDate) : now();
+                            })
+                            ->required(),
                         Textarea::make('terms')->columnSpan('full'),
                     ])
                     ->columns(2),
-                    Section::make('Onboarding')->hiddenOn('edit')->disabled( function(){
-                        if(auth()->user()&&auth()->user()->hasRole('Staff')){
-                            return true;
-                        }
-                    })
-                       ->schema([
+                Section::make('Onboarding')->hiddenOn('edit')->disabled(function () {
+                    if (auth()->user() && auth()->user()->hasRole('Staff')) {
+                        return true;
+                    }
+                })
+                    ->schema([
 
-                         Select::make('Onboarding')->options(OnboardingList::pluck('title','id'))->required()
+                        Select::make('Onboarding')->options(OnboardingList::pluck('title', 'id'))->required()
 
-                       ]),
-                       
+                    ]),
+
             ]);
-
-
     }
 
     public static function table(Table $table): Table
     {
-
         return $table
             ->contentGrid([
                 'mduse Illuminate\Auth\Events\Registered;' => 3,
-                'xl' => 3,
+                'xl' => 4,
             ])
             ->columns([
 
@@ -339,9 +332,10 @@ class EmployeeResource extends Resource
                     Stack::make([
                         // ImageColumn::make('employee.profile_picture_url')
                         //     ->label('Image')->circular(),
-                        // TextColumn::make('name')->searchable()->sortable()->toggleable()->weight('bold'),
+        
                         // TextColumn::make('jobInfo.designation.name')->label('Gender'),
-                        ViewColumn::make('sd')->view('tables.columns.employee-profile'),
+                        ViewColumn::make('name')->view('tables.columns.employee-profile')->searchable(),
+                        // TextColumn::make('name')->searchable()->sortable()->toggleable()->weight('bold'),
                     ])
                 ])
             ])
@@ -349,24 +343,30 @@ class EmployeeResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
-                ->visible(function($record){
-                   $id=$record['id'];
-                // dd($id);
-                    if(auth()->id()==$id &&auth()->user()->hasRole('Staff') || auth()->user()->hasPermissionTo('Employee Profiles')){
-                        return true;
-                    }
-                })
+                // Tables\Actions\EditAction::make()
+                //     ->visible(function ($record) {
+                //         $id = $record['id'];
+                //         // dd($id);
+                //         if (auth()->id() == $id && auth()->user()->hasRole('Staff') || auth()->user()->hasPermissionTo('Employee Profiles')) {
+                //             return true;
+                //         }
+                //     }),
+                // Tables\Actions\Action::make('view')
+                //     ->slideOver()
+                //     ->infolist([
+                //         TextEntry::make('name'),
+                //         TextEntry::make('last_name'),
+                //         TextEntry::make('email'),
 
-
+                //     ]),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make()
-                ->visible(function(){
-                    if(auth()->user()->hasPermissionTo('Employee Profiles')){
-                        return true;
-                    }
-                }),
+                    ->visible(function () {
+                        if (auth()->user()->hasPermissionTo('Employee Profiles')) {
+                            return true;
+                        }
+                    }),
             ]);
     }
 
@@ -404,6 +404,7 @@ class EmployeeResource extends Resource
             'create' => Pages\CreateEmployee::route('/create'),
             'edit' => Pages\EditEmployee::route('/{record}/edit'),
             'import' => ImportEmployee::route('/import'),
+            'add' => Pages\AddEmployee::route('/add'),
             'view' => Pages\ViewEmployee::route('/{record}'),
         ];
     }

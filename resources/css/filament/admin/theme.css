@@ -5,3 +5,11 @@
 @tailwind components;
 @tailwind utilities;
 
+.fi-ta-record input{
+    position: relative;
+}
+
+.fi-ta-record input{
+    position: absolute;
+    top: 0px;
+}
